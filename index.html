@@ -2,16 +2,16 @@
 <HTML>
 	<HEAD>
 		<META CHARSET="UTF-8"/>
-		<TITLE>WACampaign</TITLE>
-		<LINK HREF="https://canineanimal.github.io/GDRecruit/scripts/style.css" REL="stylesheet"/>
+		<TITLE>Telegram tool</TITLE>
+		<LINK HREF="/style.css" REL="stylesheet"/>
 	</HEAD>
 	<BODY>
-		<B><H2>Login _</H2></B>
-		<BR/>
+		Hi there! This tool is primarily intended to help with manual WA campaigns, but can also be used to telegram some group of nations <I>en masse</I>. It works by splitting a list of nations into batches of 8 (or less), with each batch provided after the native timeout between sending telegrams expires. This tool is maintained by <A HREF="https://www.nationstates.net/nation=islandwalk">Islandwalk</A>, forked from an older project by <A HREF="https://www.nationstates.net/nation=the_ice_states">The Ice States</A>.
+		<HR/>
 		Nation you are telegramming from: <INPUT ID="NATION"/>
 		<BR/>
 		<BR/>
-		Template code: <TEXTAREA ID="TEMPLATE"></TEXTAREA>
+		Template code: <TEXTAREA ID="TEMPLATE" ROWS="1"></TEXTAREA>
 		<BR/>
 		<BR/>
 		Verification code (NB: Generate this by going to <A HREF="https://www.nationstates.net/page=verify_login" TARGET="_BLANK">this page</A> while logged into the NS nation you are telegramming from, and copying the code here) _
@@ -27,12 +27,12 @@
 		<BUTTON ID="SUBMIT" ONCLICK="login()">Log in</BUTTON>
 		<BR/>
 		<BR/>
-		<INPUT TYPE="CHECKBOX" ID="USEDELS" CHECKED/> Automatically get Delegates
+		<INPUT TYPE="CHECKBOX" ID="EXCBLOC" CHECKED/> Exclude nations blocking campaign telegrams (uncheck for non-campaign uses, eg endotarting)
 		<BR/>
 		<BR/>
-		If you know what you are doing, you may choose to enter a list of Delegates to send telegrams to. If you want to do this, uncheck the above box and fill in the below textbox with a list of Delegates separated by one comma each.
+		<INPUT TYPE="CHECKBOX" ID="USEDELS" CHECKED/> Automatically get Delegates. Uncheck this box if you want to send telegrams to your own list of nations (entered below).
 		<BR/>
-		<TEXTAREA ID="MANINP"></TEXTAREA>
+		<TEXTAREA ID="MANINP" ROWS="5" COLS="50">Separate nation names with one comma only.</TEXTAREA>
 	</BODY>
-	<SCRIPT SRC="https://canineanimal.github.io/GDRecruit/scripts/cam.js"></SCRIPT>
+	<SCRIPT SRC="/script.js"></SCRIPT>
 </HTML>
