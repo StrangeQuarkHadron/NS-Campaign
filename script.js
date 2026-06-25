@@ -8,6 +8,7 @@ var originalTime;
 var recips = 0;
 var delNo = 0;
 var request2;
+var isCamp;
 var maxrs;
 var tem;
 var nat;
@@ -65,7 +66,7 @@ function login(){
 		request.send();
 		originalTime = (new Date()).getTime();
 		fd = eval(request.responseXML.querySelector('FOUNDEDTIME').innerHTML);
-
+		
 		// Get Delegates if needed
 		if(document.querySelector('#USEDELS').checked){
 			var delRequest = new XMLHttpRequest();
@@ -85,6 +86,7 @@ function login(){
 		}
 
 		// Print loading text
+		isCamp = document.querySelector('#ISCAMP').checked;
 		document.body.innerHTML ='Loading...<BR/><BR/><INPUT TYPE="CHECKBOX" ID="SOUND" CHECKED/> Notify <BR/><BR/><TABLE><THEAD><TH>Blacklisted string</TH><TH>Remove</TH></THEAD><TBODY>' + blackHTML + '<TR><TD>Blacklist string: <INPUT ID="VICTIM"></INPUT></TD><TD><BUTTON ONCLICK="add2blacklist()" CLASS="BLACKLIST">Add</BUTTON></TD></TR></TBODY></TABLE>';
 		
 		// Set rate limiters
@@ -98,7 +100,6 @@ function login(){
 function start(){
 	link = 'https://www.nationstates.net/page=compose_telegram?generated_by=NS-Campaign maintained by Voopmont forked from code by The Ice States GitHub https://github.com/StrangeQuarkHadron/NS-Campaign user ' + nat + '&tgto=';
 	var delsGotten = [];
-	var isCamp = document.querySelector('#ISCAMP').checked;
 	while(delsGotten.length < maxrs){
 		if(isCamp){
 			// Check that nation can receive campaign telegrams
