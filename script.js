@@ -21,6 +21,7 @@ function whitelist(victim){
 	}
 	document.querySelector('TBODY').innerHTML = blackHTML + '<TR><TD>Blacklist string: <INPUT ID="VICTIM"></INPUT></TD><TD><BUTTON ONCLICK="add2blacklist()" CLASS="BLACKLIST">Add</BUTTON></TD></TR>';
 }
+
 function add2blacklist(){
 	var victim = document.querySelector('#VICTIM').value;
 	blackHTML = '';
@@ -49,7 +50,7 @@ function login(){
 
 	// Check verification code
 	var request = new XMLHttpRequest();
-	request.open('GET', 'https://www.nationstates.net/cgi-bin/api.cgi?a=verify&nation=' + nat + '&checksum=' + verif + '&user_agent=GDRecruit maintained by the Ice States GitHub https://github.com/CanineAnimal/GDRecruit user ' + nat, false);
+	request.open('GET', 'https://www.nationstates.net/cgi-bin/api.cgi?a=verify&nation=' + nat + '&checksum=' + verif + '&user_agent=NS-Campaign maintained by Voopmont forked from code by The Ice States GitHub https://github.com/StrangeQuarkHadron/NS-Campaign user ' + nat, false);
 	request.send();
 	originalTime = (new Date()).getTime();
 	
@@ -59,7 +60,7 @@ function login(){
 	}else{
 		// Check founding date for timer otherwise
 		request = new XMLHttpRequest();
-		request.open('GET', 'https://www.nationstates.net/cgi-bin/api.cgi?nation=' + nat + '&q=foundedtime' + '&user_agent=GDRecruit maintained by the Ice States GitHub https://github.com/CanineAnimal/GDRecruit user ' + nat, false);
+		request.open('GET', 'https://www.nationstates.net/cgi-bin/api.cgi?nation=' + nat + '&q=foundedtime&user_agent=NS-Campaign maintained by Voopmont forked from code by The Ice States GitHub https://github.com/StrangeQuarkHadron/NS-Campaign user ' + nat, false);
 		while((new Date()).getTime() < originalTime + 600){};
 		request.send();
 		originalTime = (new Date()).getTime();
@@ -68,7 +69,7 @@ function login(){
 		// Get Delegates if needed
 		if(document.querySelector('#USEDELS').checked){
 			var delRequest = new XMLHttpRequest();
-			delRequest.open('GET', 'https://www.nationstates.net/cgi-bin/api.cgi?wa=1&q=delegates&user_agent=GDRecruit maintained by the Ice States GitHub https://github.com/CanineAnimal/GDRecruit user ' + nat, false);
+			delRequest.open('GET', 'https://www.nationstates.net/cgi-bin/api.cgi?wa=1&q=delegates&user_agent=NS-Campaign maintained by Voopmont forked from code by The Ice States GitHub https://github.com/StrangeQuarkHadron/NS-Campaign user ' + nat, false);
 			while((new Date()).getTime() < originalTime + 600){};
 			delRequest.send();
 			dels = delRequest.responseXML.querySelector('DELEGATES').innerHTML.split(',');
@@ -95,18 +96,21 @@ function login(){
 	}
 }
 function start(){
-	link = 'https://www.nationstates.net/page=compose_telegram?generated_by=GDRecruit maintained by the Ice States GitHub https://github.com/CanineAnimal/GDRecruit user ' + nat + '&tgto=';
+	link = 'https://www.nationstates.net/page=compose_telegram?generated_by=NS-Campaign maintained by Voopmont forked from code by The Ice States GitHub https://github.com/StrangeQuarkHadron/NS-Campaign user ' + nat + '&tgto=';
 	var delsGotten = [];
+	var isCamp = document.querySelector('#ISCAMP').checked;
 	while(delsGotten.length < maxrs){
-		// Check that Delgate can receive campaign telegrams
-		request2 = new XMLHttpRequest();
-		request2.open('GET', 'https://www.nationstates.net/cgi-bin/api.cgi?nation=' + dels[delNo] + '&q=tgcancampaign&user_agent=GDRecruit maintained by the Ice States GitHub https://github.com/CanineAnimal/GDRecruit user ' + nat, false);
-		while((new Date()).getTime() < originalTime + 600){};
-		request2.send();
-		originalTime = (new Date()).getTime();
+		if(isCamp){
+			// Check that nation can receive campaign telegrams
+			request2 = new XMLHttpRequest();
+			request2.open('GET', 'https://www.nationstates.net/cgi-bin/api.cgi?nation=' + dels[delNo] + '&q=tgcancampaign&user_agent=NS-Campaign maintained by Voopmont forked from code by The Ice States GitHub https://github.com/StrangeQuarkHadron/NS-Campaign user ' + nat, false);
+			while((new Date()).getTime() < originalTime + 600){};
+			request2.send();
+			originalTime = (new Date()).getTime();
+		}
 		
-		// If so, check that Delegate is not blacklisted
-		if(request2.responseXML.querySelector('TGCANCAMPAIGN').innerHTML == '1'){
+		// Check that nation is not blacklisted
+		if(!isCamp || request2.responseXML.querySelector('TGCANCAMPAIGN').innerHTML == '1'){
 			var blacklisted = false;
 			for(var jtem = 0; jtem < blacklist.length; jtem++){
 				if(dels[delNo].toLowerCase().replaceAll(' ', '_') == blacklist[jtem].toLowerCase().replaceAll(' ', '_')){
@@ -114,7 +118,7 @@ function start(){
 				}
 			}
 
-			// If Delegate is not blacklisted, add to list and link etc
+			// If nation is not blacklisted, add to list and link etc
 			if(!blacklisted){
 				delsGotten[delsGotten.length] = dels[delNo];
 				link += dels[delNo] + ',';
@@ -127,14 +131,14 @@ function start(){
 			break;
 		}
 	}
-	if(tem.indexOf('%TEMPLATE-') != 0){ // Mark as campaign if not using template
+	if(isCamp && tem.indexOf('%TEMPLATE-') != 0){ // Mark as campaign if not using template
 		link += '&is_recruitment_tg=true&recruittype=campaign&recruitregion=region'
 	}
 	setTimeout(function(){
 		// Post link
 		if(delsGotten.length > 0){
 			if(document.querySelector('#SOUND').checked){
-				document.body.innerHTML = '<A CLASS="TG" TARGET="_BLANK" HREF="' + link + '&message=' + tem + '" ONCLICK="recBut()">Campaign</A><BR/><BR/><INPUT TYPE="CHECKBOX" ID="SOUND" CHECKED/> Notify<BR/><AUDIO AUTOPLAY><SOURCE SRC="https://canineanimal.github.io/GDRecruit/ring.mp3" TYPE="audio/mpeg"></AUDIO><BR/><TABLE><THEAD><TH>Blacklisted string</TH><TH>Remove</TH></THEAD><TBODY>' + blackHTML + '<TR><TD>Blacklist string: <INPUT ID="VICTIM"></INPUT></TD><TD><BUTTON ONCLICK="add2blacklist()" CLASS="BLACKLIST">Add</BUTTON></TD></TR></TBODY></TABLE>';
+				document.body.innerHTML = '<A CLASS="TG" TARGET="_BLANK" HREF="' + link + '&message=' + tem + '" ONCLICK="recBut()">Campaign</A><BR/><BR/><INPUT TYPE="CHECKBOX" ID="SOUND" CHECKED/> Notify<BR/><AUDIO AUTOPLAY><SOURCE SRC="/ring.mp3" TYPE="audio/mpeg"></AUDIO><BR/><TABLE><THEAD><TH>Blacklisted string</TH><TH>Remove</TH></THEAD><TBODY>' + blackHTML + '<TR><TD>Blacklist string: <INPUT ID="VICTIM"></INPUT></TD><TD><BUTTON ONCLICK="add2blacklist()" CLASS="BLACKLIST">Add</BUTTON></TD></TR></TBODY></TABLE>';
 			}else{
 				document.body.innerHTML = '<A CLASS="TG" TARGET="_BLANK" HREF="' + link + '&message=' + tem + '" ONCLICK="recBut()">Campaign</A><BR/><BR/><INPUT TYPE="CHECKBOX" ID="SOUND"/> Notify<BR/><BR/><TABLE><THEAD><TH>Blacklisted string</TH><TH>Remove</TH></THEAD><TBODY>' + blackHTML + '<TR><TD>Blacklist string: <INPUT ID="VICTIM"></INPUT></TD><TD><BUTTON ONCLICK="add2blacklist()" CLASS="BLACKLIST">Add</BUTTON></TD></TR></TBODY></TABLE>';
 			}
